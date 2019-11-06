@@ -15,6 +15,7 @@ public class ExtractNewRecordStateConfigDefinition {
     public static final String DEBEZIUM_OPERATION_HEADER_KEY = "__debezium-operation";
     public static final String DELETED_FIELD = "__deleted";
     public static final String METADATA_FIELD_PREFIX = "__";
+    public static final String OPERATION_METADATA_FIELD_PREFIX = "__header_";
 
     public static enum DeleteHandling implements EnumeratedValue {
         DROP("drop"),
@@ -95,6 +96,14 @@ public class ExtractNewRecordStateConfigDefinition {
             .withDefault(false)
             .withDescription("Adds the operation {@link FieldName#OPERATION operation} as a header." +
                     "Its key is '" + ExtractNewRecordStateConfigDefinition.DEBEZIUM_OPERATION_HEADER_KEY + "'");
+
+    public static final Field ADD_OPERATION_FIELDS = Field.create("add.operation.fields")
+            .withDisplayName("Add operations fields such as \"op\", \"ts_ms\" to output ")
+            .withType(ConfigDef.Type.LIST)
+            .withWidth(ConfigDef.Width.LONG)
+            .withImportance(ConfigDef.Importance.LOW)
+            .withDefault("")
+            .withDescription("Add operation field with __header_ prefix");
     
     public static final Field ADD_SOURCE_FIELDS = Field.create("add.source.fields")
             .withDisplayName("Adds the specified fields from the 'source' field from the payload if they exist.")

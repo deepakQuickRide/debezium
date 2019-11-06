@@ -31,6 +31,7 @@ public class ExtractNewRecordStateTest {
     private static final String HANDLE_DELETES = "delete.handling.mode";
     private static final String OPERATION_HEADER = "operation.header";
     private static final String ADD_SOURCE_FIELDS = "add.source.fields";
+    private static final String ADD_OPERATION_FIELDS = "add.operation.fields";
 
     @Test
     public void testTombstoneDroppedByDefault() {
@@ -298,12 +299,15 @@ public class ExtractNewRecordStateTest {
         try (final ExtractNewRecordState<SourceRecord> transform = new ExtractNewRecordState<>()) {
             final Map<String, String> props = new HashMap<>();
             props.put(ADD_SOURCE_FIELDS, "lsn,version");
+            props.put(ADD_OPERATION_FIELDS,"op,ts_ms");
             transform.configure(props);
 
             final SourceRecord createRecord = createComplexCreateRecord();
             final SourceRecord unwrapped = transform.apply(createRecord);
             assertThat(((Struct) unwrapped.value()).get("__lsn")).isEqualTo(1234);
             assertThat(((Struct) unwrapped.value()).getString("__version")).isEqualTo("version!");
+            assertThat(((Struct) unwrapped.value()).getString("__header_op")).isEqualTo("c");
+            assertThat(((Struct) unwrapped.value()).get("__header_ts_ms")).isNotNull();
         }
     }
 
